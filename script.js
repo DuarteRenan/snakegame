@@ -113,6 +113,42 @@ window.onload = function () {
 
         break;
     }
+   
+   var ts_x;
+var ts_y;
+document.addEventListener('touchstart', function(e) {
+   e.preventDefault();
+   var touch = e.changedTouches[0];
+   ts_x = touch.pageX;
+   ts_y = touch.pageY;
+}, false);
+
+document.addEventListener('touchmove', function(e) {
+   e.preventDefault();
+   var touch = e.changedTouches[0];
+   td_x = touch.pageX - ts_x; // deslocamento na horizontal
+   td_y = touch.pageY - ts_y; // deslocamento na vertical
+   // O movimento principal foi vertical ou horizontal?
+   if( Math.abs( td_x ) > Math.abs( td_y ) ) {
+      // é horizontal
+      if( td_x < 0 ) {
+        vx = -vel;
+        vy = 0; // é para esquerda
+      } else {
+            vx = vel;
+        vy = 0;// direita
+      }
+   } else {
+      // é vertical
+      if( td_y < 0 ) {
+       vx = 0;
+        vy = -vel;   // cima
+      } else {
+        vx = 0;
+        vy = vel; // baixo
+      }
+   }
+}, false);
   }
 }
  
