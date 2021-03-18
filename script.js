@@ -114,41 +114,55 @@ window.onload = function () {
         break;
     }
    
-   var ts_x;
-var ts_y;
-document.addEventListener('touchstart', function(e) {
-   e.preventDefault();
-   var touch = e.changedTouches[0];
-   ts_x = touch.pageX;
-   ts_y = touch.pageY;
-}, false);
+document.addEventListener('touchstart', handleTouchStart, false);        
+document.addEventListener('touchmove', handleTouchMove, false);
 
-document.addEventListener('touchmove', function(e) {
-   e.preventDefault();
-   var touch = e.changedTouches[0];
-   td_x = touch.pageX - ts_x; // deslocamento na horizontal
-   td_y = touch.pageY - ts_y; // deslocamento na vertical
-   // O movimento principal foi vertical ou horizontal?
-   if( Math.abs( td_x ) > Math.abs( td_y ) ) {
-      // é horizontal
-      if( td_x < 0 ) {
-        vx = -vel;
-        vy = 0; // é para esquerda
-      } else {
+var xDown = null;                                                        
+var yDown = null;
+
+function getTouches(evt) {
+  return evt.touches ||             // browser API
+         evt.originalEvent.touches; // jQuery
+}                                                     
+
+function handleTouchStart(evt) {
+    const firstTouch = getTouches(evt)[0];                                      
+    xDown = firstTouch.clientX;                                      
+    yDown = firstTouch.clientY;                                      
+};                                                
+
+function handleTouchMove(evt) {
+    if ( ! xDown || ! yDown ) {
+        return;
+    }
+
+    var xUp = evt.touches[0].clientX;                                    
+    var yUp = evt.touches[0].clientY;
+
+    var xDiff = xDown - xUp;
+    var yDiff = yDown - yUp;
+
+    if ( Math.abs( xDiff ) > Math.abs( yDiff ) ) {/*most significant*/
+        if ( xDiff > 0 ) {
+           vx = -vel;
+        vy = 0; /* left swipe */ 
+        } else {
             vx = vel;
-        vy = 0;// direita
-      }
-   } else {
-      // é vertical
-      if( td_y < 0 ) {
-       vx = 0;
-        vy = -vel;   // cima
-      } else {
-        vx = 0;
-        vy = vel; // baixo
-      }
-   }
-}, false);
+        vy = 0; /* right swipe */
+        }                       
+    } else {
+        if ( yDiff > 0 ) {
+            vx = 0;
+        vy = -vel; /* up swipe */ 
+        } else { 
+            vx = 0;
+        vy = vel /* down swipe */
+        }                                                                 
+    }
+    /* reset values */
+    xDown = null;
+    yDown = null;                                             
+};
   }
 }
  
